@@ -1,0 +1,16 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/clientes/page": "app/clientes/page.js",
+  "/configuracoes/menu/page": "app/configuracoes/menu/page.js",
+  "/configuracoes/page": "app/configuracoes/page.js",
+  "/configuracoes/quadras/page": "app/configuracoes/quadras/page.js",
+  "/configuracoes/usuarios/page": "app/configuracoes/usuarios/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/profile/page": "app/profile/page.js",
+  "/reservas/calendario/page": "app/reservas/calendario/page.js",
+  "/reservas/editar/page": "app/reservas/editar/page.js",
+  "/reservas/nova/page": "app/reservas/nova/page.js",
+  "/reservas/page": "app/reservas/page.js"
+}
