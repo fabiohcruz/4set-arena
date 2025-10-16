@@ -13,7 +13,7 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination: process.env.NODE_ENV === 'production' 
-          ? 'http://localhost:5001/api/:path*'
+          ? 'https://4set-arena-production.up.railway.app/api/:path*'
           : 'http://backend:5000/api/:path*',
       },
     ];
