@@ -22,6 +22,7 @@ import pool from './config/database';
 import { initDatabase } from './scripts/initDatabase';
 import { fixAdmin } from './scripts/fixAdmin';
 import { importAllData } from './scripts/importAllData';
+import { resetDatabase } from './scripts/resetDatabase';
 
 dotenv.config();
 
@@ -445,6 +446,18 @@ app.get('/api/list-tables', async (req, res) => {
     if (client) {
       client.release();
     }
+  }
+});
+
+// Rota para resetar banco completo
+app.get('/api/reset-database', async (req, res) => {
+  try {
+    console.log('🔄 Iniciando reset completo do banco...');
+    await resetDatabase();
+    res.json({ message: 'Banco foi resetado e recriado com sucesso!' });
+  } catch (error) {
+    console.error('❌ Erro ao resetar banco:', error);
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 

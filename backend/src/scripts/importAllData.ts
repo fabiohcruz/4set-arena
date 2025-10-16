@@ -379,6 +379,20 @@ const importAllData = async () => {
       updatedAt: 'updated_at',
     };
 
+    // Criar todas as tabelas primeiro, mesmo que não tenham dados
+    console.log('🔨 Criando todas as tabelas necessárias...');
+    await createTableIfNotExists('users');
+    await createTableIfNotExists('members');
+    await createTableIfNotExists('courts');
+    await createTableIfNotExists('products');
+    await createTableIfNotExists('menu_items');
+    await createTableIfNotExists('tariffs');
+    await createTableIfNotExists('sales');
+    await createTableIfNotExists('sale_items');
+    await createTableIfNotExists('stock_movements');
+    await createTableIfNotExists('reservations');
+
+    // Agora importar os dados
     await importTable('users', importedData.users, usersColumnMap);
     await importTable('members', importedData.members, membersColumnMap);
     await importTable('courts', importedData.courts, courtsColumnMap);
