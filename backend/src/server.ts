@@ -199,7 +199,7 @@ app.post('/api/create-admin', async (req, res) => {
       
       // Criar hash da senha 'password'
       const bcrypt = require('bcryptjs');
-      const hashedPassword = await bcrypt.hash('password', 10);
+      const hashedPassword = await bcrypt.hash('admin', 10);
       
       // Inserir usuário admin
       await client.query(`
@@ -222,11 +222,11 @@ app.post('/api/create-admin', async (req, res) => {
       // Verificar se a senha está correta
       const admin = adminCheck.rows[0];
       const bcrypt = require('bcryptjs');
-      const isValidPassword = await bcrypt.compare('password', admin.password);
+      const isValidPassword = await bcrypt.compare('admin', admin.password);
       
       if (!isValidPassword) {
         console.log('🔄 Atualizando senha do admin...');
-        const hashedPassword = await bcrypt.hash('password', 10);
+        const hashedPassword = await bcrypt.hash('admin', 10);
         
         await client.query(
           'UPDATE users SET password = $1 WHERE username = $2',
@@ -308,7 +308,7 @@ app.get('/api/create-admin', async (req, res) => {
       
       // Criar hash da senha 'password'
       const bcrypt = require('bcryptjs');
-      const hashedPassword = await bcrypt.hash('password', 10);
+      const hashedPassword = await bcrypt.hash('admin', 10);
       
       // Inserir usuário admin
       await client.query(`
@@ -331,11 +331,11 @@ app.get('/api/create-admin', async (req, res) => {
       // Verificar se a senha está correta
       const admin = adminCheck.rows[0];
       const bcrypt = require('bcryptjs');
-      const isValidPassword = await bcrypt.compare('password', admin.password);
+      const isValidPassword = await bcrypt.compare('admin', admin.password);
       
       if (!isValidPassword) {
         console.log('🔄 Atualizando senha do admin...');
-        const hashedPassword = await bcrypt.hash('password', 10);
+        const hashedPassword = await bcrypt.hash('admin', 10);
         
         await client.query(
           'UPDATE users SET password = $1 WHERE username = $2',
