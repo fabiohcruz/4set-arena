@@ -17,6 +17,7 @@ import memberReservationRoutes from './routes/memberReservations';
 import memberOrderRoutes from './routes/memberOrders';
 import pool from './config/database';
 import './models'; // Inicializar models
+import { initDatabase } from './scripts/initDatabase';
 
 dotenv.config();
 
@@ -34,10 +35,20 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Teste de conexão com o banco
+// Teste de conexão com o banco e inicialização
 pool.connect()
-  .then(() => {
+  .then(async () => {
     console.log('✅ Conectado ao PostgreSQL');
+    
+    // Inicializar banco de dados se necessário
+    try {
+      console.log('🔄 Verificando se banco precisa ser inicializado...');
+      await initDatabase();
+      console.log('✅ Banco de dados verificado/inicializado');
+    } catch (error) {
+      console.error('❌ Erro ao inicializar banco:', error);
+      // Não falhar o startup se já estiver inicializado
+    }
   })
   .catch((err) => {
     console.error('❌ Erro ao conectar com PostgreSQL:', err);
@@ -62,10 +73,16 @@ app.use('/api/member/orders', memberOrderRoutes);
 
 // Rota de teste
 app.get('/api/health', (req, res) => {
-  res.json({ 
+  res.status(200).json({ 
+    status: 'ok',
     message: 'Sistema Esportivo 4Set API está funcionando!',
     timestamp: new Date().toISOString()
   });
+});
+
+// Rota de teste simples
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
 // Middleware de erro

@@ -77,10 +77,12 @@ const initDatabase = async () => {
     
   } catch (error) {
     console.error('❌ Erro ao inicializar banco de dados:', error);
+    // Não fechar conexões se chamado do servidor
+    if (require.main === module) {
+      await pool.end();
+      await sequelize.close();
+    }
     throw error;
-  } finally {
-    await pool.end();
-    await sequelize.close();
   }
 };
 
