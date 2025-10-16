@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
   images: {
     domains: ['localhost', '4set-arena-backend.elasticbeanstalk.com'],
     unoptimized: true
