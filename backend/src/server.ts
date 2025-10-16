@@ -103,6 +103,55 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Rota para testar login simples
+app.post('/api/test-login', async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    const { username, password } = req.body;
+    
+    console.log('🔍 Testando login para:', username);
+    
+    // Buscar usuário diretamente no banco
+    const result = await client.query('SELECT * FROM users WHERE username = $1', [username]);
+    
+    if (result.rows.length === 0) {
+      console.log('❌ Usuário não encontrado');
+      return res.status(401).json({ message: 'Usuário não encontrado' });
+    }
+    
+    const user = result.rows[0];
+    console.log('✅ Usuário encontrado:', user.username, 'Role:', user.role);
+    
+    // Verificar senha
+    const bcrypt = require('bcryptjs');
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
+      console.log('❌ Senha inválida');
+      return res.status(401).json({ message: 'Senha inválida' });
+    }
+    
+    console.log('✅ Login bem-sucedido');
+    res.json({ 
+      message: 'Login bem-sucedido',
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role
+      }
+    });
+    
+  } catch (error) {
+    console.error('❌ Erro no teste de login:', error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
 // Rota para criar usuário admin
 app.post('/api/create-admin', async (req, res) => {
   let client;
