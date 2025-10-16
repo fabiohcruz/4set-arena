@@ -217,13 +217,13 @@ export default function MemberLayout({ children }: MemberLayoutProps) {
     });
 
     // Separar itens pais e filhos
-    const parentItems = filteredItems.filter(item => !item.parent_key);
-    const childItems = filteredItems.filter(item => item.parent_key);
+    const parentItems = filteredItems.filter(item => !(item as any).parent_key);
+    const childItems = filteredItems.filter(item => (item as any).parent_key);
 
     // Organizar filhos por pai
     const itemsWithChildren = parentItems.map(parent => {
       const children = childItems
-        .filter(child => child.parent_key === parent.key)
+        .filter(child => (child as any).parent_key === parent.key)
         .sort((a, b) => a.order_index - b.order_index)
         .map((item, index) => ({
           ...item,
