@@ -550,6 +550,34 @@ app.get('/api/check-database', async (req, res) => {
   }
 });
 
+// Rota para corrigir senha do admin
+app.get('/api/fix-admin-password', async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    console.log('🔄 Corrigindo senha do admin...');
+
+    const bcrypt = require('bcryptjs');
+    const hashedPassword = await bcrypt.hash('password', 10);
+
+    await client.query(
+      'UPDATE users SET password = $1 WHERE username = $2',
+      [hashedPassword, 'admin']
+    );
+
+    console.log('✅ Senha do admin corrigida para "password"');
+    res.json({ message: 'Senha do admin corrigida para "password"' });
+
+  } catch (error) {
+    console.error('❌ Erro ao corrigir senha:', error);
+    res.status(500).json({ error: (error as Error).message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
 // Rota para atualizar senha do admin
 app.get('/api/update-admin-password', async (req, res) => {
   let client;
