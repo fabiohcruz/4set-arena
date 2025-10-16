@@ -19,6 +19,7 @@ import memberOrderRoutes from './routes/memberOrders';
 import pool from './config/database';
 // import './models'; // Inicializar models - removido para evitar conflitos
 import { initDatabase } from './scripts/initDatabase';
+import { fixAdmin } from './scripts/fixAdmin';
 
 dotenv.config();
 
@@ -57,6 +58,11 @@ pool.connect()
       console.log('🔄 Verificando se banco precisa ser inicializado...');
       await initDatabase();
       console.log('✅ Banco de dados verificado/inicializado');
+      
+      // Corrigir usuário admin se necessário
+      console.log('🔄 Verificando usuário admin...');
+      await fixAdmin();
+      console.log('✅ Usuário admin verificado/corrigido');
     } catch (error) {
       console.error('❌ Erro ao inicializar banco:', error);
       // Não falhar o startup se já estiver inicializado

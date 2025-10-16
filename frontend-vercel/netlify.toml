@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NEXT_PUBLIC_API_URL = "http://localhost:3001"
+  NEXT_PUBLIC_APP_NAME = "4SET ARENA"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

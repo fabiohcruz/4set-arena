@@ -21,6 +21,9 @@ COPY backend/ ./backend/
 RUN npm run build --prefix frontend
 RUN npm run build --prefix backend
 
+# Copy frontend build to backend public directory
+RUN mkdir -p backend/public && cp -r frontend/out/* backend/public/
+
 # Expose port
 EXPOSE 3000
 
