@@ -86,6 +86,29 @@ pool.connect()
       try {
         await importAllData();
         console.log('✅ Todos os dados importados com sucesso');
+        
+        // Verificar tabelas após importação
+        console.log('🔄 Verificando tabelas após importação...');
+        const finalTablesResult = await pool.query(`
+          SELECT table_name 
+          FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          ORDER BY table_name;
+        `);
+        console.log('📋 Tabelas finais:', finalTablesResult.rows.length);
+        finalTablesResult.rows.forEach(row => console.log(`   - ${row.table_name}`));
+        
+        // Verificar colunas da tabela users
+        console.log('🔄 Verificando colunas da tabela users...');
+        const usersColumnsResult = await pool.query(`
+          SELECT column_name, data_type 
+          FROM information_schema.columns 
+          WHERE table_name = 'users' 
+          ORDER BY ordinal_position;
+        `);
+        console.log('📋 Colunas da tabela users:', usersColumnsResult.rows.length);
+        usersColumnsResult.rows.forEach(row => console.log(`   - ${row.column_name} (${row.data_type})`));
+        
       } catch (error) {
         console.error('❌ Erro ao importar dados:', error);
         // Não falhar o startup se já estiver importado
@@ -434,6 +457,56 @@ app.get('/api/import-all-data', async (req, res) => {
   } catch (error) {
     console.error('❌ Erro ao importar dados:', error);
     res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+// Rota para verificar estrutura do banco
+app.get('/api/check-database', async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    console.log('🔄 Verificando estrutura do banco...');
+    
+    // Listar tabelas
+    const tablesResult = await client.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      ORDER BY table_name;
+    `);
+    
+    // Verificar colunas da tabela users
+    const usersColumnsResult = await client.query(`
+      SELECT column_name, data_type 
+      FROM information_schema.columns 
+      WHERE table_name = 'users' 
+      ORDER BY ordinal_position;
+    `);
+    
+    // Verificar se stock_movements existe
+    const stockMovementsCheck = await client.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' 
+        AND table_name = 'stock_movements'
+      );
+    `);
+    
+    res.json({
+      message: 'Estrutura do banco verificada',
+      tables: tablesResult.rows.map(row => row.table_name),
+      usersColumns: usersColumnsResult.rows.map(row => ({ name: row.column_name, type: row.data_type })),
+      stockMovementsExists: stockMovementsCheck.rows[0].exists,
+      tablesCount: tablesResult.rows.length
+    });
+    
+  } catch (error) {
+    console.error('❌ Erro ao verificar banco:', error);
+    res.status(500).json({ error: (error as Error).message });
+  } finally {
+    if (client) {
+      client.release();
+    }
   }
 });
 
