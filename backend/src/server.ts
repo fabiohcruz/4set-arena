@@ -21,6 +21,7 @@ import pool from './config/database';
 // import './models'; // Inicializar models - removido para evitar conflitos
 import { initDatabase } from './scripts/initDatabase';
 import { fixAdmin } from './scripts/fixAdmin';
+import { importAllData } from './scripts/importAllData';
 
 dotenv.config();
 
@@ -364,6 +365,18 @@ app.get('/api/create-admin', async (req, res) => {
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Algo deu errado!' });
+});
+
+// Rota para importar todos os dados
+app.get('/api/import-all-data', async (req, res) => {
+  try {
+    console.log('🔄 Iniciando importação de todos os dados...');
+    await importAllData();
+    res.json({ message: 'Todos os dados foram importados com sucesso!' });
+  } catch (error) {
+    console.error('❌ Erro ao importar dados:', error);
+    res.status(500).json({ error: (error as Error).message });
+  }
 });
 
 // Rota para atualizar senha do admin
