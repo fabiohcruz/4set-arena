@@ -410,9 +410,9 @@ export default function MemberReservationsPage() {
                             <td key={`${court.id}-${time}`} className="p-2">
                               <button
                                 onClick={() => handleTimeSlotClick(court, time)}
-                                className={`w-full h-12 rounded-xl transition-all duration-200 flex flex-col items-center justify-center ${getStatusColor(reservation || { available: true, court: court.name, time, price: court.price })}`}
+                                className={`w-full h-12 rounded-xl transition-all duration-200 flex flex-col items-center justify-center ${getStatusColor(reservation || { id: `${court.id}-${time}`, available: true, court: court.name, time, price: court.price })}`}
                               >
-                                {getStatusIcon(reservation || { available: true, court: court.name, time, price: court.price })}
+                                {getStatusIcon(reservation || { id: `${court.id}-${time}`, available: true, court: court.name, time, price: court.price })}
                                 {!isAvailable && !reservation?.isMemberReservation && (
                                   <span className="text-xs font-medium mt-1">
                                     Ocupado
