@@ -37,7 +37,7 @@ const iconOptions = [
 
 export default function GestaoMenuPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -55,17 +55,29 @@ export default function GestaoMenuPage() {
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Verificar se o usuário é admin
+  // Verificar autenticação e carregar dados
   useEffect(() => {
+    if (authLoading) return; // Aguardar carregamento da autenticação
+    
+    if (!isAuthenticated) {
+      router.push('/login');
+      return;
+    }
+    
     if (user && user.role !== 'admin') {
       router.push('/dashboard');
+      return;
     }
-  }, [user, router]);
+    
+    // Se autenticado e é admin, carregar dados
+    loadMenuItems();
+  }, [user, authLoading, isAuthenticated, router]);
 
   // Carregar itens do menu
   const loadMenuItems = async () => {
     try {
       setLoading(true);
+      setError(null);
       const response = await menuAPI.getAllMenuItems();
       if (response.success) {
         setMenuItems(response.data);
@@ -79,10 +91,6 @@ export default function GestaoMenuPage() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    loadMenuItems();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -244,13 +252,21 @@ export default function GestaoMenuPage() {
     );
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <Layout>
         <div className="min-h-screen gradient-bg flex items-center justify-center">
           <div className="glass p-8 rounded-3xl text-center">
             <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-white text-lg">Carregando itens do menu...</p>
+            <p className="text-white text-lg">
+              {authLoading ? 'Verificando autenticação...' : 'Carregando itens do menu...'}
+            </p>
+            <p className="text-white/60 text-sm mt-2">
+              Auth Loading: {authLoading ? 'true' : 'false'} |
+              Loading: {loading ? 'true' : 'false'} |
+              Is Authenticated: {isAuthenticated ? 'true' : 'false'} |
+              User: {user ? JSON.stringify(user) : 'null'}
+            </p>
           </div>
         </div>
       </Layout>

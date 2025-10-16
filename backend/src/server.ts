@@ -8,7 +8,15 @@ import courtRoutes from './routes/courts';
 import memberRoutes from './routes/members';
 import menuRoutes from './routes/menu';
 import userRoutes from './routes/users';
+import productRoutes from './routes/products';
+import tariffRoutes from './routes/tariffs';
+import saleRoutes from './routes/sales';
+import stockRoutes from './routes/stock';
+import memberAuthRoutes from './routes/memberAuth';
+import memberReservationRoutes from './routes/memberReservations';
+import memberOrderRoutes from './routes/memberOrders';
 import pool from './config/database';
+import './models'; // Inicializar models
 
 dotenv.config();
 
@@ -20,7 +28,7 @@ app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://yourdomain.com'] 
-    : ['http://localhost:3000'],
+    : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true
 }));
 app.use(express.json());
@@ -42,6 +50,15 @@ app.use('/api/courts', courtRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/menu', menuRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/tariffs', tariffRoutes);
+app.use('/api/sales', saleRoutes);
+app.use('/api/stock', stockRoutes);
+
+// Rotas para membros
+app.use('/api/member/auth', memberAuthRoutes);
+app.use('/api/member/reservations', memberReservationRoutes);
+app.use('/api/member/orders', memberOrderRoutes);
 
 // Rota de teste
 app.get('/api/health', (req, res) => {

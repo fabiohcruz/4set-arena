@@ -21,7 +21,12 @@ import {
   Search,
   Plus,
   LayoutDashboard,
-  MapPin
+  MapPin,
+  ShoppingCart,
+  Package,
+  DollarSign,
+  TrendingUp,
+  Upload
 } from 'lucide-react';
 import { MenuPosition } from './MenuConfig';
 
@@ -44,7 +49,12 @@ const getIconComponent = (iconName: string) => {
     'Calendar': Calendar,
     'Menu': Menu,
     'LayoutDashboard': LayoutDashboard,
-    'MapPin': MapPin
+    'MapPin': MapPin,
+    'ShoppingCart': ShoppingCart,
+    'Package': Package,
+    'DollarSign': DollarSign,
+    'TrendingUp': TrendingUp,
+    'Upload': Upload
   };
   return iconMap[iconName] || Menu;
 };

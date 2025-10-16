@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 // Configurar axios com interceptors para debug
 const apiClient = axios.create({
@@ -78,7 +78,7 @@ export const courtsAPI = {
 
   // Buscar quadra por ID
   async getCourtById(id: number): Promise<{ success: boolean; data: Court }> {
-    const response = await apiClient.get(`/courts/${id}`);
+    const response = await apiClient.get(`/api/courts/${id}`);
     return response.data;
   },
 
@@ -90,19 +90,19 @@ export const courtsAPI = {
 
   // Atualizar quadra
   async updateCourt(id: number, courtData: UpdateCourtData): Promise<{ success: boolean; data: Court }> {
-    const response = await apiClient.put(`/courts/${id}`, courtData);
+    const response = await apiClient.put(`/api/courts/${id}`, courtData);
     return response.data;
   },
 
   // Deletar quadra
   async deleteCourt(id: number): Promise<{ success: boolean; message: string }> {
-    const response = await apiClient.delete(`/courts/${id}`);
+    const response = await apiClient.delete(`/api/courts/${id}`);
     return response.data;
   },
 
   // Alternar status ativo/inativo
   async toggleCourtActive(id: number): Promise<{ success: boolean; data: Court }> {
-    const response = await apiClient.patch(`/courts/${id}/toggle`);
+    const response = await apiClient.patch(`/api/courts/${id}/toggle`);
     return response.data;
   }
 };

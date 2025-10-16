@@ -49,3 +49,4 @@ else
     echo "❌ Erro no deploy. Verifique os logs:"
     echo "   eb logs"
 fi
+

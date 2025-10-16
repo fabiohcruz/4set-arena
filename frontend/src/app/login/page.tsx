@@ -121,14 +121,23 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-white/80 text-sm font-medium mb-2">
-                CPF
+                CPF ou Usuário
               </label>
               <input
                 type="text"
                 value={cpf}
-                onChange={(e) => setCpf(formatCPF(e.target.value))}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Se contém apenas números, formata como CPF
+                  if (/^\d+$/.test(value.replace(/\D/g, ''))) {
+                    setCpf(formatCPF(value));
+                  } else {
+                    // Se contém letras, permite texto livre (username)
+                    setCpf(value);
+                  }
+                }}
                 className="input-glass w-full"
-                placeholder="000.000.000-00"
+                placeholder="000.000.000-00 ou admin"
                 required
               />
             </div>
@@ -177,9 +186,9 @@ export default function LoginPage() {
 
           <div className="mt-8 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-xl">
             <p className="text-yellow-200 text-sm text-center">
-              <strong>Usuário padrão:</strong><br />
-              CPF: <code className="bg-black/20 px-2 py-1 rounded">admin</code> (ou seu CPF)<br />
-              Senha: <code className="bg-black/20 px-2 py-1 rounded">admin</code>
+              <strong>Credenciais de teste:</strong><br />
+              <strong>Opção 1:</strong> Usuário: <code className="bg-black/20 px-2 py-1 rounded">admin</code> | Senha: <code className="bg-black/20 px-2 py-1 rounded">admin</code><br />
+              <strong>Opção 2:</strong> CPF: <code className="bg-black/20 px-2 py-1 rounded">050.330.499-92</code> | Senha: <code className="bg-black/20 px-2 py-1 rounded">admin</code>
             </p>
           </div>
         </motion.div>

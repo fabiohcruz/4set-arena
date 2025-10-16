@@ -14,7 +14,9 @@ import {
   Bell,
   Database,
   Menu,
-  ArrowRight
+  ArrowRight,
+  Package,
+  DollarSign
 } from 'lucide-react';
 
 interface ConfigSection {
@@ -44,6 +46,24 @@ const configSections: ConfigSection[] = [
     icon: Menu,
     href: '/configuracoes/menu',
     color: 'text-orange-400',
+    requiresAdmin: true
+  },
+  {
+    id: 'produtos',
+    title: 'Produtos e Serviços',
+    description: 'Gerenciar produtos, serviços e estoque do PDV',
+    icon: Package,
+    href: '/configuracoes/produtos',
+    color: 'text-cyan-400',
+    requiresAdmin: true
+  },
+  {
+    id: 'tarifarios',
+    title: 'Tarifários',
+    description: 'Configurar preços e tarifas por esporte e horário',
+    icon: DollarSign,
+    href: '/configuracoes/tarifarios',
+    color: 'text-emerald-400',
     requiresAdmin: true
   },
   {

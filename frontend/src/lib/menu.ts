@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 // Configurar axios com interceptors para debug
 const apiClient = axios.create({
@@ -93,13 +93,13 @@ export const menuAPI = {
 
   // Buscar item por ID
   async getMenuItemById(id: number): Promise<{ success: boolean; data: MenuItem }> {
-    const response = await apiClient.get(`/menu/${id}`);
+    const response = await apiClient.get(`/api/menu/${id}`);
     return response.data;
   },
 
   // Buscar item por chave
   async getMenuItemByKey(key: string): Promise<{ success: boolean; data: MenuItem }> {
-    const response = await apiClient.get(`/menu/key/${key}`);
+    const response = await apiClient.get(`/api/menu/key/${key}`);
     return response.data;
   },
 
@@ -111,13 +111,13 @@ export const menuAPI = {
 
   // Atualizar item do menu
   async updateMenuItem(id: number, itemData: UpdateMenuItemData): Promise<{ success: boolean; data: MenuItem }> {
-    const response = await apiClient.put(`/menu/${id}`, itemData);
+    const response = await apiClient.put(`/api/menu/${id}`, itemData);
     return response.data;
   },
 
   // Alternar status habilitado/desabilitado
   async toggleMenuItemStatus(id: number): Promise<{ success: boolean; data: MenuItem }> {
-    const response = await apiClient.patch(`/menu/${id}/toggle`);
+    const response = await apiClient.patch(`/api/menu/${id}/toggle`);
     return response.data;
   },
 
@@ -129,7 +129,7 @@ export const menuAPI = {
 
   // Deletar item do menu
   async deleteMenuItem(id: number): Promise<{ success: boolean; message: string }> {
-    const response = await apiClient.delete(`/menu/${id}`);
+    const response = await apiClient.delete(`/api/menu/${id}`);
     return response.data;
   },
 

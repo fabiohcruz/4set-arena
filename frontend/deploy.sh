@@ -35,3 +35,4 @@ else
     echo "❌ Erro no build. Verifique os logs acima."
     exit 1
 fi
+

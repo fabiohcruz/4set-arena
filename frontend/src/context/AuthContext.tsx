@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  getToken: () => string | undefined;
   updateProfile: (data: Partial<User>) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
   updatePreferences: (preferences: Record<string, any>) => Promise<void>;
@@ -67,6 +68,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
   };
 
+  const getToken = () => {
+    return getAuthToken();
+  };
+
   const updateProfile = async (data: Partial<User>) => {
     try {
       const response = await authAPI.updateProfile(data);
@@ -111,6 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     isAuthenticated: !!user,
+    getToken,
     updateProfile,
     changePassword,
     updatePreferences,
