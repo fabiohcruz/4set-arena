@@ -366,6 +366,34 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: 'Algo deu errado!' });
 });
 
+// Rota para atualizar senha do admin
+app.get('/api/update-admin-password', async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    console.log('🔄 Atualizando senha do admin para "admin"...');
+    
+    const bcrypt = require('bcryptjs');
+    const hashedPassword = await bcrypt.hash('admin', 10);
+    
+    await client.query(
+      'UPDATE users SET password = $1 WHERE username = $2',
+      [hashedPassword, 'admin']
+    );
+    
+    console.log('✅ Senha do admin atualizada para "admin"');
+    res.json({ message: 'Senha do admin atualizada para "admin"' });
+    
+  } catch (error) {
+    console.error('❌ Erro ao atualizar senha:', error);
+    res.status(500).json({ error: (error as Error).message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
 // Rota catch-all para rotas não encontradas
 app.get('*', (req, res) => {
   res.status(404).json({ message: 'Rota não encontrada' });
