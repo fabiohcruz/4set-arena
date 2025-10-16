@@ -66,6 +66,21 @@ pool.connect()
       await fixAdmin();
       console.log('✅ Usuário admin verificado/corrigido');
       
+      // Listar tabelas existentes
+      console.log('🔄 Listando tabelas existentes...');
+      try {
+        const tablesResult = await pool.query(`
+          SELECT table_name 
+          FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          ORDER BY table_name;
+        `);
+        console.log('📋 Tabelas encontradas:', tablesResult.rows.length);
+        tablesResult.rows.forEach(row => console.log(`   - ${row.table_name}`));
+      } catch (error) {
+        console.error('❌ Erro ao listar tabelas:', error);
+      }
+      
       // Importar todos os dados da base local
       console.log('🔄 Importando todos os dados da base local...');
       try {
