@@ -256,6 +256,11 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
+// Rota de teste para verificar se as rotas estão funcionando
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Rotas funcionando!', timestamp: new Date().toISOString() });
+});
+
 // Middleware de erro
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error(err.stack);
