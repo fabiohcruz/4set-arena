@@ -24,5 +24,11 @@ RUN npm run build --prefix backend
 # Expose port
 EXPOSE 3000
 
+# Copy start script
+COPY start.sh ./
+
+# Make start script executable
+RUN chmod +x start.sh
+
 # Start both backend and frontend
-CMD ["sh", "-c", "npm start --prefix backend & npm start --prefix frontend"]
+CMD ["./start.sh"]
