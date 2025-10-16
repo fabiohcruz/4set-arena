@@ -37,7 +37,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Servir arquivos estáticos do frontend
-const frontendPath = path.join(__dirname, '../frontend/out');
+const frontendPath = path.join(__dirname, '../../frontend/out');
 console.log('📁 Caminho do frontend:', frontendPath);
 app.use(express.static(frontendPath));
 
@@ -106,7 +106,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Rota catch-all para servir o frontend
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, '../frontend/out/index.html');
+  const indexPath = path.join(__dirname, '../../frontend/out/index.html');
   console.log('📄 Tentando servir:', indexPath);
   
   // Verificar se o arquivo existe
