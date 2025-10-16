@@ -1,25 +1,93 @@
 import pool from '../config/database';
-import { sequelize } from '../config/sequelize';
-import { Product } from '../models/Product';
-import { Tariff } from '../models/Tariff';
-import { Sale } from '../models/Sale';
-import { SaleItem } from '../models/SaleItem';
-import { Court } from '../models/Court';
-import { Member } from '../models/Member';
-import { MenuItem } from '../models/MenuItem';
-import { User } from '../models/User';
 
 const initDatabase = async () => {
   try {
     console.log('🔄 Inicializando banco de dados...');
     
-    // 1. Criar tabelas usando Sequelize
+    // 1. Criar tabelas básicas
     console.log('📋 Criando tabelas...');
-    await sequelize.sync({ force: false });
+    const createTablesSQL = `
+      -- Tabela de usuários
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        email VARCHAR(100),
+        full_name VARCHAR(100),
+        phone VARCHAR(20),
+        avatar_url VARCHAR(255),
+        role VARCHAR(20) DEFAULT 'admin',
+        preferences JSONB DEFAULT '{}',
+        last_login TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- Tabela de membros
+      CREATE TABLE IF NOT EXISTS members (
+        id SERIAL PRIMARY KEY,
+        member_code VARCHAR(20) UNIQUE NOT NULL,
+        full_name VARCHAR(100) NOT NULL,
+        email VARCHAR(100),
+        phone VARCHAR(20),
+        birth_date DATE,
+        address TEXT,
+        emergency_contact VARCHAR(100),
+        emergency_phone VARCHAR(20),
+        membership_type VARCHAR(50) DEFAULT 'regular',
+        status VARCHAR(20) DEFAULT 'active',
+        join_date DATE DEFAULT CURRENT_DATE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- Tabela de quadras
+      CREATE TABLE IF NOT EXISTS courts (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        description TEXT,
+        type VARCHAR(50),
+        capacity INTEGER,
+        hourly_rate DECIMAL(10,2),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- Tabela de produtos
+      CREATE TABLE IF NOT EXISTS products (
+        id SERIAL PRIMARY KEY,
+        code VARCHAR(50) UNIQUE NOT NULL,
+        description VARCHAR(255) NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        stock INTEGER DEFAULT 0,
+        category VARCHAR(100),
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- Tabela de itens do menu
+      CREATE TABLE IF NOT EXISTS menu_items (
+        id SERIAL PRIMARY KEY,
+        key VARCHAR(50) UNIQUE NOT NULL,
+        label VARCHAR(100) NOT NULL,
+        icon VARCHAR(50),
+        path VARCHAR(200),
+        order_index INTEGER DEFAULT 0,
+        is_enabled BOOLEAN DEFAULT true,
+        requires_admin BOOLEAN DEFAULT false,
+        parent_key VARCHAR(50),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
     
-    // 2. Executar script SQL de inicialização
-    console.log('📋 Executando script de inicialização...');
-    const initSQL = `
+    await pool.query(createTablesSQL);
+    
+    // 2. Inserir dados iniciais
+    console.log('📋 Inserindo dados iniciais...');
+    const initDataSQL = `
       -- Inserir usuário admin padrão
       INSERT INTO users (username, password, email, full_name, role, preferences) 
       VALUES ('admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@4set.com', 'Administrador do Sistema', 'admin', '{"theme": "dark", "language": "pt-BR", "notifications": true}')
@@ -65,11 +133,11 @@ const initDatabase = async () => {
       ON CONFLICT (code) DO NOTHING;
     `;
     
-    await pool.query(initSQL);
+    await pool.query(initDataSQL);
     
     console.log('✅ Banco de dados inicializado com sucesso!');
     console.log('📋 Dados inseridos:');
-    console.log('   - Usuário admin (admin/admin)');
+    console.log('   - Usuário admin (admin/password)');
     console.log('   - Itens do menu');
     console.log('   - Quadras de exemplo');
     console.log('   - Membros de exemplo');
@@ -80,7 +148,6 @@ const initDatabase = async () => {
     // Não fechar conexões se chamado do servidor
     if (require.main === module) {
       await pool.end();
-      await sequelize.close();
     }
     throw error;
   }

@@ -16,7 +16,7 @@ import memberAuthRoutes from './routes/memberAuth';
 import memberReservationRoutes from './routes/memberReservations';
 import memberOrderRoutes from './routes/memberOrders';
 import pool from './config/database';
-import './models'; // Inicializar models
+// import './models'; // Inicializar models - removido para evitar conflitos
 import { initDatabase } from './scripts/initDatabase';
 
 dotenv.config();
