@@ -2,6 +2,9 @@
 frontend/
 frontend/**
 
+# Backend node_modules (should be installed during build)
+backend/node_modules/
+
 # Docker
 docker-compose.yml
 Dockerfile
