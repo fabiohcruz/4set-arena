@@ -366,53 +366,9 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: 'Algo deu errado!' });
 });
 
-// Rota catch-all para servir página de status (apenas para rotas que não são API)
+// Rota catch-all para rotas não encontradas
 app.get('*', (req, res) => {
-  // Se for uma rota da API, retornar 404
-  if (req.path.startsWith('/api/')) {
-    return res.status(404).json({ message: 'Rota não encontrada' });
-  }
-  
-  console.log('📄 Servindo página de status para:', req.path);
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>4Set Arena - Sistema Esportivo</title>
-      <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
-        .container { max-width: 600px; margin: 0 auto; }
-        h1 { font-size: 2.5em; margin-bottom: 20px; }
-        p { font-size: 1.2em; margin-bottom: 30px; }
-        .status { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin: 20px 0; }
-        .api-link { background: rgba(255,255,255,0.2); padding: 10px; border-radius: 5px; margin: 10px 0; }
-        a { color: white; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>🏆 4Set Arena</h1>
-        <p>Sistema Esportivo</p>
-        <div class="status">
-          <h2>✅ Backend Funcionando</h2>
-          <p>API está operacional</p>
-          <p>Banco de dados conectado</p>
-        </div>
-        <div class="api-link">
-          <h3>🔗 Endpoints da API:</h3>
-          <p><a href="/api/health">/api/health</a> - Status da API</p>
-          <p><a href="/api/menu/enabled">/api/menu/enabled</a> - Menu</p>
-          <p><a href="/api/courts">/api/courts</a> - Quadras</p>
-          <p><a href="/api/members">/api/members</a> - Membros</p>
-        </div>
-        <p>Frontend em desenvolvimento...</p>
-      </div>
-    </body>
-    </html>
-  `);
+  res.status(404).json({ message: 'Rota não encontrada' });
 });
 
 app.listen(PORT, () => {
