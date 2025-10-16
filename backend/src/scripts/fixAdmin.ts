@@ -99,7 +99,10 @@ const fixAdmin = async () => {
     if (client) {
       client.release();
     }
-    await pool.end();
+    // Não fechar o pool se chamado do servidor
+    if (require.main === module) {
+      await pool.end();
+    }
   }
 };
 
