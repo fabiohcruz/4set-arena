@@ -24,5 +24,5 @@ RUN npm run build --prefix backend
 # Expose port
 EXPOSE 3000
 
-# Start the frontend application
-CMD ["npm", "start", "--prefix", "frontend"]
+# Start both backend and frontend
+CMD ["sh", "-c", "npm start --prefix backend & npm start --prefix frontend"]
