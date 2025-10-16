@@ -37,7 +37,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Servir arquivos estáticos do frontend
-app.use(express.static(path.join(__dirname, '../../frontend/out')));
+const frontendPath = path.join(__dirname, '../frontend/out');
+console.log('📁 Caminho do frontend:', frontendPath);
+app.use(express.static(frontendPath));
 
 // Debug das variáveis de ambiente
 console.log('🔍 Variáveis de ambiente:');
@@ -104,7 +106,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Rota catch-all para servir o frontend
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/out/index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/out/index.html'));
 });
 
 app.listen(PORT, () => {
