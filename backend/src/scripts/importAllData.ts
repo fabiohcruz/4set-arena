@@ -229,7 +229,7 @@ const importAllData = async () => {
         WHERE table_name = $1 
         ORDER BY ordinal_position;
       `, [tableName]);
-      return result.rows.map(row => row.column_name);
+      return result.rows.map((row: any) => row.column_name);
     };
 
     const importTable = async (tableName: string, data: any[], columnMap?: { [key: string]: string }) => {
@@ -269,6 +269,7 @@ const importAllData = async () => {
 
         // Special handling for password hashing if it's the users table
         if (tableName === 'users' && filteredRow.password && !filteredRow.password.startsWith('$2a$')) {
+          const bcrypt = require('bcryptjs');
           filteredRow.password = await bcrypt.hash(filteredRow.password, 10);
           values[columns.indexOf('password')] = filteredRow.password;
         }
