@@ -15,10 +15,32 @@ const importAllData = async () => {
 
     const importFilePath = path.join(__dirname, '../../data-export.json');
     console.log('📁 Caminho do arquivo:', importFilePath);
+    console.log('📁 Diretório atual:', __dirname);
+    console.log('📁 Arquivos no diretório:', fs.readdirSync(path.join(__dirname, '../../')));
     
     // Verificar se o arquivo existe
     if (!fs.existsSync(importFilePath)) {
       console.log('❌ Arquivo data-export.json não encontrado');
+      console.log('📁 Tentando caminhos alternativos...');
+      
+      // Tentar caminhos alternativos
+      const alternativePaths = [
+        path.join(__dirname, '../data-export.json'),
+        path.join(__dirname, './data-export.json'),
+        path.join(process.cwd(), 'data-export.json'),
+        path.join(process.cwd(), 'backend/data-export.json')
+      ];
+      
+      for (const altPath of alternativePaths) {
+        console.log(`📁 Tentando: ${altPath}`);
+        if (fs.existsSync(altPath)) {
+          console.log(`✅ Arquivo encontrado em: ${altPath}`);
+          const rawData = fs.readFileSync(altPath, 'utf-8');
+          const importedData = JSON.parse(rawData);
+          console.log('📋 Dados carregados com sucesso!');
+          break;
+        }
+      }
       return;
     }
     
@@ -200,6 +222,16 @@ const importAllData = async () => {
       }
     };
 
+    const getTableColumns = async (tableName: string): Promise<string[]> => {
+      const result = await client!.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = $1 
+        ORDER BY ordinal_position;
+      `, [tableName]);
+      return result.rows.map(row => row.column_name);
+    };
+
     const importTable = async (tableName: string, data: any[], columnMap?: { [key: string]: string }) => {
       if (!data || data.length === 0) {
         console.log(`⚠️ Tabela ${tableName}: sem dados para importar`);
@@ -209,6 +241,10 @@ const importAllData = async () => {
       // Criar tabela se não existir
       await createTableIfNotExists(tableName);
 
+      // Obter colunas existentes na tabela
+      const existingColumns = await getTableColumns(tableName);
+      console.log(`📋 Colunas existentes em ${tableName}:`, existingColumns);
+
       // Clear table before import, but only if it's not 'users' (to preserve admin)
       if (tableName !== 'users') {
         console.log(`🗑️ Limpando tabela ${tableName}...`);
@@ -216,18 +252,36 @@ const importAllData = async () => {
       }
 
       for (const row of data) {
-        const columns = Object.keys(row)
-          .map(key => columnMap && columnMap[key] ? columnMap[key] : camelToSnake(key));
-        const values = Object.values(row);
+        // Filtrar apenas colunas que existem na tabela
+        const filteredRow: any = {};
+        for (const [key, value] of Object.entries(row)) {
+          const columnName = columnMap && columnMap[key] ? columnMap[key] : camelToSnake(key);
+          if (existingColumns.includes(columnName)) {
+            filteredRow[columnName] = value;
+          } else {
+            console.log(`⚠️ Coluna ${columnName} não existe na tabela ${tableName}, pulando...`);
+          }
+        }
+
+        const columns = Object.keys(filteredRow);
+        const values = Object.values(filteredRow);
         const placeholders = values.map((_, i) => `$${i + 1}`).join(', ');
 
-        const insertQuery = `
-          INSERT INTO ${tableName} (${columns.join(', ')})
-          VALUES (${placeholders})
-          ON CONFLICT (id) DO UPDATE SET
-            ${columns.map(col => `${col} = EXCLUDED.${col}`).join(', ')}
-        `;
-        await client!.query(insertQuery, values);
+        // Special handling for password hashing if it's the users table
+        if (tableName === 'users' && filteredRow.password && !filteredRow.password.startsWith('$2a$')) {
+          filteredRow.password = await bcrypt.hash(filteredRow.password, 10);
+          values[columns.indexOf('password')] = filteredRow.password;
+        }
+
+        if (columns.length > 0) {
+          const insertQuery = `
+            INSERT INTO ${tableName} (${columns.join(', ')})
+            VALUES (${placeholders})
+            ON CONFLICT (id) DO UPDATE SET
+              ${columns.map(col => `${col} = EXCLUDED.${col}`).join(', ')}
+          `;
+          await client!.query(insertQuery, values);
+        }
       }
       console.log(`✅ ${tableName}: ${data.length} registros importados`);
     };
