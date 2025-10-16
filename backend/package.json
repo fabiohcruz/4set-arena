@@ -14,7 +14,8 @@
     "seed:lanchonete": "ts-node src/scripts/seedLanchonete.ts",
     "sync:db": "ts-node src/scripts/syncDatabase.ts",
     "create:tables": "ts-node src/scripts/createTables.ts",
-    "sync:stock": "ts-node src/scripts/syncStockTables.ts"
+    "sync:stock": "ts-node src/scripts/syncStockTables.ts",
+    "init:db": "ts-node src/scripts/initDatabase.ts"
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
