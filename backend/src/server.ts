@@ -377,6 +377,39 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: 'Algo deu errado!' });
 });
 
+// Rota para listar todas as tabelas
+app.get('/api/list-tables', async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    console.log('🔄 Listando todas as tabelas...');
+    
+    const result = await client.query(`
+      SELECT table_name, table_schema 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      ORDER BY table_name;
+    `);
+    
+    console.log('📋 Tabelas encontradas:', result.rows.length);
+    result.rows.forEach(row => console.log(`   - ${row.table_name}`));
+    
+    res.json({ 
+      message: 'Tabelas listadas com sucesso',
+      tables: result.rows,
+      count: result.rows.length
+    });
+    
+  } catch (error) {
+    console.error('❌ Erro ao listar tabelas:', error);
+    res.status(500).json({ error: (error as Error).message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
 // Rota para importar todos os dados
 app.get('/api/import-all-data', async (req, res) => {
   try {
