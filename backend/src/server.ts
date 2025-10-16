@@ -16,6 +16,7 @@ import stockRoutes from './routes/stock';
 import memberAuthRoutes from './routes/memberAuth';
 import memberReservationRoutes from './routes/memberReservations';
 import memberOrderRoutes from './routes/memberOrders';
+import debugRoutes from './routes/debug';
 import pool from './config/database';
 // import './models'; // Inicializar models - removido para evitar conflitos
 import { initDatabase } from './scripts/initDatabase';
@@ -89,6 +90,9 @@ app.use('/api/stock', stockRoutes);
 app.use('/api/member/auth', memberAuthRoutes);
 app.use('/api/member/reservations', memberReservationRoutes);
 app.use('/api/member/orders', memberOrderRoutes);
+
+// Rotas de debug
+app.use('/api/debug', debugRoutes);
 
 // Rota de teste
 app.get('/api/health', (req, res) => {
