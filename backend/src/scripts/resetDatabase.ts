@@ -83,10 +83,13 @@ const resetDatabase = async () => {
         description TEXT,
         type VARCHAR(50),
         capacity INTEGER,
-        hourly_rate DECIMAL(10,2),
+        price DECIMAL(10,2),
         is_active BOOLEAN DEFAULT true,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        sport_type VARCHAR(50),
+        price_per_hour DECIMAL(10,2),
+        image_url VARCHAR(255)
       );
 
       -- Tabela de produtos
@@ -298,10 +301,12 @@ const resetDatabase = async () => {
     };
 
     const courtsColumnMap = {
-      hourlyRate: 'hourly_rate',
       isActive: 'is_active',
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      sportType: 'sport_type',
+      pricePerHour: 'price_per_hour',
+      imageUrl: 'image_url',
     };
 
     const menuItemsColumnMap = {
