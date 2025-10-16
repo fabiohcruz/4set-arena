@@ -65,6 +65,16 @@ pool.connect()
       console.log('🔄 Verificando usuário admin...');
       await fixAdmin();
       console.log('✅ Usuário admin verificado/corrigido');
+      
+      // Importar todos os dados da base local
+      console.log('🔄 Importando todos os dados da base local...');
+      try {
+        await importAllData();
+        console.log('✅ Todos os dados importados com sucesso');
+      } catch (error) {
+        console.error('❌ Erro ao importar dados:', error);
+        // Não falhar o startup se já estiver importado
+      }
     } catch (error) {
       console.error('❌ Erro ao inicializar banco:', error);
       // Não falhar o startup se já estiver inicializado
