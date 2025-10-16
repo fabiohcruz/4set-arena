@@ -23,6 +23,7 @@ import { initDatabase } from './scripts/initDatabase';
 import { fixAdmin } from './scripts/fixAdmin';
 import { importAllData } from './scripts/importAllData';
 import { resetDatabase } from './scripts/resetDatabase';
+import { simpleReset } from './scripts/simpleReset';
 
 dotenv.config();
 
@@ -446,6 +447,18 @@ app.get('/api/list-tables', async (req, res) => {
     if (client) {
       client.release();
     }
+  }
+});
+
+// Rota para reset simples
+app.get('/api/simple-reset', async (req, res) => {
+  try {
+    console.log('🔄 Iniciando reset simples do banco...');
+    await simpleReset();
+    res.json({ message: 'Banco foi resetado com sucesso!' });
+  } catch (error) {
+    console.error('❌ Erro no reset simples:', error);
+    res.status(500).json({ error: (error as Error).message });
   }
 });
 
