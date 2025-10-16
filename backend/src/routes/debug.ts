@@ -93,7 +93,7 @@ router.post('/create-admin', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Erro ao criar admin:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     if (client) {
       client.release();
@@ -113,7 +113,7 @@ router.get('/test-db', async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Erro ao testar banco:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     if (client) {
       client.release();

@@ -144,7 +144,7 @@ app.post('/api/test-login', async (req, res) => {
     
   } catch (error) {
     console.error('❌ Erro no teste de login:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     if (client) {
       client.release();
@@ -243,7 +243,7 @@ app.post('/api/create-admin', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Erro ao criar admin:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     if (client) {
       client.release();
@@ -352,7 +352,7 @@ app.get('/api/create-admin', async (req, res) => {
 
   } catch (error) {
     console.error('❌ Erro ao criar admin:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: (error as Error).message });
   } finally {
     if (client) {
       client.release();
