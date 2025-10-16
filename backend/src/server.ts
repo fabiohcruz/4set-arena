@@ -35,6 +35,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Debug das variáveis de ambiente
+console.log('🔍 Variáveis de ambiente:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Configurada' : 'Não configurada');
+console.log('PORT:', process.env.PORT);
+
 // Teste de conexão com o banco e inicialização
 pool.connect()
   .then(async () => {
@@ -52,6 +58,7 @@ pool.connect()
   })
   .catch((err) => {
     console.error('❌ Erro ao conectar com PostgreSQL:', err);
+    console.error('🔍 Verifique se a variável DATABASE_URL está configurada no Railway');
   });
 
 // Rotas
