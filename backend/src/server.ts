@@ -267,8 +267,13 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   res.status(500).json({ message: 'Algo deu errado!' });
 });
 
-// Rota catch-all para servir página de status
+// Rota catch-all para servir página de status (apenas para rotas que não são API)
 app.get('*', (req, res) => {
+  // Se for uma rota da API, retornar 404
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ message: 'Rota não encontrada' });
+  }
+  
   console.log('📄 Servindo página de status para:', req.path);
   res.send(`
     <!DOCTYPE html>
