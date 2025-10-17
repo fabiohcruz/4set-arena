@@ -7,17 +7,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const memberLogin = async (req: Request, res: Response) => {
   try {
+    console.log('🔐 Tentativa de login de membro:', req.body);
     const { memberCode, password } = req.body;
 
     if (!memberCode || !password) {
+      console.log('❌ Dados incompletos');
       return res.status(400).json({ error: 'Código do membro e senha são obrigatórios' });
     }
 
     // Buscar membro pelo código usando query direta
+    console.log('🔍 Buscando membro:', memberCode);
     const result = await pool.query(
       'SELECT * FROM members WHERE member_code = $1 AND status = $2',
       [memberCode, 'active']
     );
+    console.log('📊 Membros encontrados:', result.rows.length);
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Código de membro inválido ou inativo' });
