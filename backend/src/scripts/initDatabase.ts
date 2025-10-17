@@ -85,7 +85,18 @@ const initDatabase = async () => {
     
     await pool.query(createTablesSQL);
     
-    // 2. Inserir dados iniciais
+    // 2. Inserir dados iniciais (somente se não existirem)
+    console.log('📋 Verificando dados iniciais...');
+    
+    // Verificar se já existem dados
+    const checkData = await pool.query('SELECT COUNT(*) FROM members');
+    const hasData = parseInt(checkData.rows[0].count) > 0;
+    
+    if (hasData) {
+      console.log('✅ Banco já possui dados. Pulando inserção inicial.');
+      return;
+    }
+    
     console.log('📋 Inserindo dados iniciais...');
     const initDataSQL = `
       -- Inserir usuário admin padrão
