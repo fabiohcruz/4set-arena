@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { User, Lock, ArrowLeft } from 'lucide-react';
+import API_CONFIG from '@/lib/api-config';
 
 export default function MemberLoginPage() {
   const [memberCode, setMemberCode] = useState('');
@@ -18,12 +19,9 @@ export default function MemberLoginPage() {
     setError('');
 
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://4set-arena-production.up.railway.app/api';
-      const response = await fetch(`${API_URL}/member/auth/login`, {
+      const response = await API_CONFIG.fetch('/member/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: API_CONFIG.getHeaders(),
         body: JSON.stringify({
           memberCode,
           password
