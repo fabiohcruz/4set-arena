@@ -27,12 +27,21 @@ const addMissingTables = async () => {
         const defaultClause = column.default ? ` DEFAULT ${column.default}` : '';
         const sql = `ALTER TABLE users ADD COLUMN IF NOT EXISTS ${column.name} ${column.type}${defaultClause}`;
         await client.query(sql);
-        console.log(`✅ Coluna ${column.name} adicionada`);
+        console.log(`✅ Coluna ${column.name} adicionada na users`);
       } catch (error) {
         console.log(`⚠️ Coluna ${column.name} já existe ou erro:`, (error as Error).message);
       }
     }
     console.log('✅ Todas as colunas verificadas/adicionadas na tabela users');
+
+    // Adicionar coluna password na tabela members
+    console.log('🔄 Adicionando coluna password na tabela members...');
+    try {
+      await client.query('ALTER TABLE members ADD COLUMN IF NOT EXISTS password VARCHAR(255)');
+      console.log('✅ Coluna password adicionada na tabela members');
+    } catch (error) {
+      console.log('⚠️ Coluna password já existe na tabela members');
+    }
 
     const createMissingTablesSQL = `
       -- Tabela de quadras
