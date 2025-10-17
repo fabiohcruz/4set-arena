@@ -35,7 +35,11 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com'] 
+    ? [
+        'https://frontend-vercel-pearl.vercel.app',
+        'https://4set-arena-production.up.railway.app',
+        'https://yourdomain.com'
+      ] 
     : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true
 }));
