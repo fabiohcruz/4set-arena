@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Member } from '../models/Member';
+import pool from '../config/database';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
@@ -13,21 +13,26 @@ export const memberLogin = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Código do membro e senha são obrigatórios' });
     }
 
-    // Buscar membro pelo código
-    const member = await Member.findOne({
-      where: { member_code: memberCode, status: 'active' }
-    });
+    // Buscar membro pelo código usando query direta
+    const result = await pool.query(
+      'SELECT * FROM members WHERE member_code = $1 AND status = $2',
+      [memberCode, 'active']
+    );
 
-    if (!member) {
+    if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Código de membro inválido ou inativo' });
     }
 
-    // Verificar senha (assumindo que temos um campo password no modelo Member)
-    // Se não tiver, podemos usar uma senha padrão ou criar um sistema de senhas
-    const isValidPassword = await bcrypt.compare(password, member.password || '');
+    const member = result.rows[0];
+
+    // Verificar senha
+    if (!member.password) {
+      return res.status(401).json({ error: 'Senha não configurada para este membro' });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, member.password);
     
-    // Para desenvolvimento, vamos aceitar senha padrão 'membro123'
-    if (!isValidPassword && password !== 'membro123') {
+    if (!isValidPassword) {
       return res.status(401).json({ error: 'Senha incorreta' });
     }
 
@@ -69,17 +74,18 @@ export const getMemberProfile = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Token de acesso necessário' });
     }
 
-    const member = await Member.findByPk(memberId, {
-      attributes: { exclude: ['password'] }
-    });
+    const result = await pool.query(
+      'SELECT id, member_code, full_name, email, phone, birth_date, address, city, state, zip_code, emergency_contact, emergency_phone, membership_type, status, join_date, created_at, updated_at FROM members WHERE id = $1',
+      [memberId]
+    );
 
-    if (!member) {
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Membro não encontrado' });
     }
 
     res.json({
       success: true,
-      data: member
+      data: result.rows[0]
     });
   } catch (error) {
     console.error('Erro ao buscar perfil do membro:', error);
@@ -96,28 +102,31 @@ export const updateMemberProfile = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Token de acesso necessário' });
     }
 
-    const member = await Member.findByPk(memberId);
-
-    if (!member) {
-      return res.status(404).json({ error: 'Membro não encontrado' });
-    }
-
     // Atualizar dados do membro
-    await member.update({
-      full_name: full_name || member.full_name,
-      email: email || member.email,
-      phone: phone || member.phone,
-      address: address || member.address,
-      city: city || member.city,
-      state: state || member.state,
-      zip_code: zip_code || member.zip_code,
-      updated_at: new Date()
-    });
+    await pool.query(
+      `UPDATE members SET 
+        full_name = COALESCE($1, full_name),
+        email = COALESCE($2, email),
+        phone = COALESCE($3, phone),
+        address = COALESCE($4, address),
+        city = COALESCE($5, city),
+        state = COALESCE($6, state),
+        zip_code = COALESCE($7, zip_code),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $8`,
+      [full_name, email, phone, address, city, state, zip_code, memberId]
+    );
+
+    // Buscar membro atualizado
+    const result = await pool.query(
+      'SELECT id, member_code, full_name, email, phone, birth_date, address, city, state, zip_code, emergency_contact, emergency_phone, membership_type, status, join_date, created_at, updated_at FROM members WHERE id = $1',
+      [memberId]
+    );
 
     res.json({
       success: true,
       message: 'Perfil atualizado com sucesso',
-      data: member
+      data: result.rows[0]
     });
   } catch (error) {
     console.error('Erro ao atualizar perfil do membro:', error);
