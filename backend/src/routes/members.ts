@@ -37,7 +37,7 @@ const updateMemberValidation = [
 // Rotas de consulta
 router.get('/', MemberController.getAllMembers);
 router.get('/active', MemberController.getActiveMembers);
-router.get('/stats', MemberController.getMemberStats);
+// router.get('/stats', MemberController.getMemberStats); // TODO: Implementar estatísticas
 router.get('/code/:code', MemberController.getMemberByCode);
 router.get('/:id', MemberController.getMemberById);
 

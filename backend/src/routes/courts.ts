@@ -40,7 +40,7 @@ router.get('/:id', authenticateToken, CourtController.getCourtById);
 router.post('/', authenticateToken, courtValidation, CourtController.createCourt);
 router.put('/:id', authenticateToken, courtValidation, CourtController.updateCourt);
 router.delete('/:id', authenticateToken, CourtController.deleteCourt);
-router.patch('/:id/toggle', authenticateToken, CourtController.toggleCourtActive);
+router.patch('/:id/toggle', authenticateToken, CourtController.toggleCourtStatus);
 
 export default router;
 
