@@ -504,6 +504,33 @@ app.get('/api/import-all-data', async (req, res) => {
   }
 });
 
+// Rota para obter credenciais do banco (apenas para debug)
+app.get('/api/database-credentials', async (req, res) => {
+  try {
+    const dbUrl = process.env.DATABASE_URL;
+    
+    if (!dbUrl) {
+      return res.status(500).json({ error: 'DATABASE_URL não configurada' });
+    }
+
+    // Parse da URL do banco
+    const url = new URL(dbUrl);
+    
+    res.json({
+      host: url.hostname,
+      port: url.port || '5432',
+      database: url.pathname.substring(1),
+      username: url.username,
+      password: url.password,
+      ssl: process.env.NODE_ENV === 'production' ? 'require' : 'disable',
+      connectionString: dbUrl
+    });
+  } catch (error) {
+    console.error('Erro ao obter credenciais:', error);
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
 // Rota para verificar estrutura do banco
 app.get('/api/check-database', async (req, res) => {
   let client;
