@@ -4,7 +4,26 @@ const addMissingTables = async () => {
   let client;
   try {
     client = await pool.connect();
-    console.log('🔄 Adicionando tabelas faltantes...');
+    console.log('🔄 Adicionando tabelas e colunas faltantes...');
+
+    // Adicionar colunas faltantes na tabela users
+    console.log('🔄 Adicionando colunas faltantes na tabela users...');
+    const addUsersColumnsSQL = `
+      ALTER TABLE users 
+        ADD COLUMN IF NOT EXISTS birth_date DATE,
+        ADD COLUMN IF NOT EXISTS gender VARCHAR(10),
+        ADD COLUMN IF NOT EXISTS address TEXT,
+        ADD COLUMN IF NOT EXISTS city VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS state VARCHAR(50),
+        ADD COLUMN IF NOT EXISTS zip_code VARCHAR(20),
+        ADD COLUMN IF NOT EXISTS emergency_contact VARCHAR(100),
+        ADD COLUMN IF NOT EXISTS emergency_phone VARCHAR(20),
+        ADD COLUMN IF NOT EXISTS bio TEXT,
+        ADD COLUMN IF NOT EXISTS cpf VARCHAR(20),
+        ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active';
+    `;
+    await client.query(addUsersColumnsSQL);
+    console.log('✅ Colunas adicionadas na tabela users');
 
     const createMissingTablesSQL = `
       -- Tabela de quadras
@@ -107,7 +126,7 @@ const addMissingTables = async () => {
     `;
 
     await client.query(createMissingTablesSQL);
-    console.log('✅ Tabelas faltantes foram criadas');
+    console.log('✅ Tabelas e colunas faltantes foram criadas');
 
   } catch (error) {
     console.error('❌ Erro ao adicionar tabelas:', error);
