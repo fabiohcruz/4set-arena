@@ -554,6 +554,42 @@ app.get('/api/check-database', async (req, res) => {
   }
 });
 
+// Rota para definir senha de membro
+app.get('/api/set-member-password/:memberCode/:password', async (req, res) => {
+  let client;
+  try {
+    client = await pool.connect();
+    const { memberCode, password } = req.params;
+    console.log(`🔄 Definindo senha para membro ${memberCode}...`);
+
+    const bcrypt = require('bcryptjs');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const result = await client.query(
+      'UPDATE members SET password = $1 WHERE member_code = $2 RETURNING member_code, full_name',
+      [hashedPassword, memberCode]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Membro não encontrado' });
+    }
+
+    console.log(`✅ Senha definida para ${result.rows[0].full_name}`);
+    res.json({ 
+      message: `Senha definida com sucesso para ${result.rows[0].full_name}`,
+      memberCode: result.rows[0].member_code
+    });
+
+  } catch (error) {
+    console.error('❌ Erro ao definir senha:', error);
+    res.status(500).json({ error: (error as Error).message });
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
+
 // Rota para corrigir senha do admin
 app.get('/api/fix-admin-password', async (req, res) => {
   let client;
