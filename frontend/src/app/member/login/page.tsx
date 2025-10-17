@@ -18,7 +18,8 @@ export default function MemberLoginPage() {
     setError('');
 
     try {
-      const response = await fetch('/api/member/auth/login', {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://4set-arena-production.up.railway.app/api';
+      const response = await fetch(`${API_URL}/member/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,11 +144,11 @@ export default function MemberLoginPage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-white/70 text-sm">Código:</span>
-                  <code className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-lg text-sm font-mono">MEMBRO001</code>
+                  <code className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-lg text-sm font-mono">MEM0001</code>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-white/70 text-sm">Senha:</span>
-                  <code className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-lg text-sm font-mono">membro123</code>
+                  <code className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-lg text-sm font-mono">member123</code>
                 </div>
               </div>
             </div>
