@@ -6,24 +6,33 @@ const addMissingTables = async () => {
     client = await pool.connect();
     console.log('🔄 Adicionando tabelas e colunas faltantes...');
 
-    // Adicionar colunas faltantes na tabela users
+    // Adicionar colunas faltantes na tabela users (uma por vez)
     console.log('🔄 Adicionando colunas faltantes na tabela users...');
-    const addUsersColumnsSQL = `
-      ALTER TABLE users 
-        ADD COLUMN IF NOT EXISTS birth_date DATE,
-        ADD COLUMN IF NOT EXISTS gender VARCHAR(10),
-        ADD COLUMN IF NOT EXISTS address TEXT,
-        ADD COLUMN IF NOT EXISTS city VARCHAR(100),
-        ADD COLUMN IF NOT EXISTS state VARCHAR(50),
-        ADD COLUMN IF NOT EXISTS zip_code VARCHAR(20),
-        ADD COLUMN IF NOT EXISTS emergency_contact VARCHAR(100),
-        ADD COLUMN IF NOT EXISTS emergency_phone VARCHAR(20),
-        ADD COLUMN IF NOT EXISTS bio TEXT,
-        ADD COLUMN IF NOT EXISTS cpf VARCHAR(20),
-        ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active';
-    `;
-    await client.query(addUsersColumnsSQL);
-    console.log('✅ Colunas adicionadas na tabela users');
+    const userColumns = [
+      { name: 'birth_date', type: 'DATE' },
+      { name: 'gender', type: 'VARCHAR(10)' },
+      { name: 'address', type: 'TEXT' },
+      { name: 'city', type: 'VARCHAR(100)' },
+      { name: 'state', type: 'VARCHAR(50)' },
+      { name: 'zip_code', type: 'VARCHAR(20)' },
+      { name: 'emergency_contact', type: 'VARCHAR(100)' },
+      { name: 'emergency_phone', type: 'VARCHAR(20)' },
+      { name: 'bio', type: 'TEXT' },
+      { name: 'cpf', type: 'VARCHAR(20)' },
+      { name: 'status', type: 'VARCHAR(20)', default: "'active'" }
+    ];
+
+    for (const column of userColumns) {
+      try {
+        const defaultClause = column.default ? ` DEFAULT ${column.default}` : '';
+        const sql = `ALTER TABLE users ADD COLUMN IF NOT EXISTS ${column.name} ${column.type}${defaultClause}`;
+        await client.query(sql);
+        console.log(`✅ Coluna ${column.name} adicionada`);
+      } catch (error) {
+        console.log(`⚠️ Coluna ${column.name} já existe ou erro:`, (error as Error).message);
+      }
+    }
+    console.log('✅ Todas as colunas verificadas/adicionadas na tabela users');
 
     const createMissingTablesSQL = `
       -- Tabela de quadras
