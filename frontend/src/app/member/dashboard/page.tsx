@@ -48,9 +48,10 @@ export default function MemberDashboardPage() {
   const fetchDashboardData = async () => {
     try {
       const token = localStorage.getItem('memberToken');
+      const apiUrl = 'https://4set-arena-production.up.railway.app/api';
       
       // Buscar reservas
-      const reservationsResponse = await fetch('/api/member/reservations', {
+      const reservationsResponse = await fetch(`${apiUrl}/member/reservations`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -68,7 +69,7 @@ export default function MemberDashboardPage() {
       }
 
       // Buscar pedidos
-      const ordersResponse = await fetch('/api/member/orders', {
+      const ordersResponse = await fetch(`${apiUrl}/member/orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
