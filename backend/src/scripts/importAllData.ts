@@ -1,6 +1,7 @@
 import pool from '../config/database';
 import fs from 'fs';
 import path from 'path';
+import bcrypt from 'bcryptjs';
 
 // Helper function to convert camelCase to snake_case
 const camelToSnake = (key: string): string => {
@@ -403,6 +404,15 @@ const importAllData = async () => {
     await importTable('sale_items', importedData.sale_items, saleItemsColumnMap);
     await importTable('stock_movements', importedData.stock_movements, stockMovementsColumnMap);
     await importTable('reservations', importedData.reservations, reservationsColumnMap);
+
+    // Configurar senha padrão para MEM0001 após importação
+    console.log('🔐 Configurando senha padrão para MEM0001...');
+    const hashedPassword = await bcrypt.hash('member123', 10);
+    await client!.query(
+      'UPDATE members SET password = $1 WHERE member_code = $2',
+      [hashedPassword, 'MEM0001']
+    );
+    console.log('✅ Senha configurada para MEM0001');
 
     console.log('🎉 Importação concluída com sucesso!');
 
