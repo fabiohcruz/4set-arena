@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MemberLayout from '@/components/MemberLayout';
+import PaymentButton from '@/components/PaymentButton';
 import { 
   Calendar, 
   ShoppingCart, 
@@ -380,20 +381,33 @@ export default function MemberDashboardPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 + index * 0.1 }}
-                      className="flex items-center justify-between p-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 group"
+                      className="p-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                          <MapPin className="w-6 h-6 text-blue-400" />
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <MapPin className="w-6 h-6 text-blue-400" />
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold text-lg">{reservation.court?.name}</p>
+                            <p className="text-white/60 text-sm">{formatDate(reservation.startTime)}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-white font-semibold text-lg">{reservation.court?.name}</p>
-                          <p className="text-white/60 text-sm">{formatDate(reservation.startTime)}</p>
-                        </div>
+                        <span className={`px-4 py-2 rounded-2xl text-sm font-medium ${getStatusColor(reservation.status)}`}>
+                          {getStatusText(reservation.status)}
+                        </span>
                       </div>
-                      <span className={`px-4 py-2 rounded-2xl text-sm font-medium ${getStatusColor(reservation.status)}`}>
-                        {getStatusText(reservation.status)}
-                      </span>
+                      {reservation.payment_status === 'pending' && reservation.total_price && (
+                        <div className="mt-4">
+                          <PaymentButton
+                            type="reservation"
+                            itemId={reservation.id}
+                            amount={parseFloat(reservation.total_price)}
+                            description={`Reserva - ${reservation.court?.name}`}
+                            onSuccess={() => fetchDashboardData()}
+                          />
+                        </div>
+                      )}
                     </motion.div>
                   ))}
                 </div>
@@ -441,20 +455,33 @@ export default function MemberDashboardPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.7 + index * 0.1 }}
-                      className="flex items-center justify-between p-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300 group"
+                      className="p-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all duration-300"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                          <CreditCard className="w-6 h-6 text-purple-400" />
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <CreditCard className="w-6 h-6 text-purple-400" />
+                          </div>
+                          <div>
+                            <p className="text-white font-semibold text-lg">Pedido #{order.id}</p>
+                            <p className="text-white/60 text-sm">{formatCurrency(order.total)}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-white font-semibold text-lg">Pedido #{order.id}</p>
-                          <p className="text-white/60 text-sm">{formatCurrency(order.total)}</p>
-                        </div>
+                        <span className={`px-4 py-2 rounded-2xl text-sm font-medium ${getStatusColor(order.status)}`}>
+                          {getStatusText(order.status)}
+                        </span>
                       </div>
-                      <span className={`px-4 py-2 rounded-2xl text-sm font-medium ${getStatusColor(order.status)}`}>
-                        {getStatusText(order.status)}
-                      </span>
+                      {order.status === 'pending' && order.total && (
+                        <div className="mt-4">
+                          <PaymentButton
+                            type="order"
+                            itemId={order.id}
+                            amount={parseFloat(order.total)}
+                            description={`Pedido #${order.id}`}
+                            onSuccess={() => fetchDashboardData()}
+                          />
+                        </div>
+                      )}
                     </motion.div>
                   ))}
                 </div>

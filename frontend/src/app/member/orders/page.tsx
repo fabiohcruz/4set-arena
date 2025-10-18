@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import MemberLayout from '@/components/MemberLayout';
+import PaymentButton from '@/components/PaymentButton';
 import { 
   ShoppingCart, 
   Package, 
@@ -382,7 +383,7 @@ export default function MemberOrdersPage() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {order.items.slice(0, 3).map((item) => (
                     <span
                       key={item.id}
@@ -397,6 +398,24 @@ export default function MemberOrdersPage() {
                     </span>
                   )}
                 </div>
+
+                {/* Botão de Pagamento para pedidos pendentes */}
+                {order.status === 'pending' && (
+                  <div className="mt-4">
+                    <PaymentButton
+                      type="order"
+                      itemId={order.id}
+                      amount={order.total}
+                      description={`Pedido ${order.order_number}`}
+                      onSuccess={() => {
+                        loadOrders(); // Recarregar pedidos após pagamento
+                      }}
+                      onError={(error) => {
+                        alert(`Erro ao processar pagamento: ${error}`);
+                      }}
+                    />
+                  </div>
+                )}
               </motion.div>
             ))
           )}
@@ -495,6 +514,32 @@ export default function MemberOrdersPage() {
                     <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
                       <p className="text-white">{selectedOrder.notes}</p>
                     </div>
+                  </div>
+                )}
+
+                {/* Botão de Pagamento no Modal */}
+                {selectedOrder.status === 'pending' && (
+                  <div className="mt-6 p-6 bg-yellow-500/10 border border-yellow-500/30 rounded-2xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <AlertCircle className="w-6 h-6 text-yellow-400" />
+                      <div>
+                        <p className="text-white font-semibold">Pagamento Pendente</p>
+                        <p className="text-white/60 text-sm">Complete o pagamento para confirmar seu pedido</p>
+                      </div>
+                    </div>
+                    <PaymentButton
+                      type="order"
+                      itemId={selectedOrder.id}
+                      amount={selectedOrder.total}
+                      description={`Pedido ${selectedOrder.order_number}`}
+                      onSuccess={() => {
+                        closeOrderModal();
+                        loadOrders();
+                      }}
+                      onError={(error) => {
+                        alert(`Erro ao processar pagamento: ${error}`);
+                      }}
+                    />
                   </div>
                 )}
               </div>
