@@ -17,6 +17,7 @@ import memberAuthRoutes from './routes/memberAuth';
 import memberReservationRoutes from './routes/memberReservations';
 import memberOrderRoutes from './routes/memberOrders';
 import debugRoutes from './routes/debug';
+import paymentRoutes from './routes/payments';
 import pool from './config/database';
 // import './models'; // Inicializar models - removido para evitar conflitos
 import { initDatabase } from './scripts/initDatabase';
@@ -34,7 +35,7 @@ const PORT = process.env.PORT || 5000;
 // Middlewares
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production'
+  origin: process.env.NODE_ENV === 'production' 
     ? [
         'https://frontend-vercel-pearl.vercel.app',
         'https://4set-arena-t7z4.vercel.app',
@@ -149,6 +150,9 @@ app.use('/api/stock', stockRoutes);
 app.use('/api/member/auth', memberAuthRoutes);
 app.use('/api/member/reservations', memberReservationRoutes);
 app.use('/api/member/orders', memberOrderRoutes);
+
+// Rotas de pagamento
+app.use('/api/payments', paymentRoutes);
 
 // Rotas de debug
 app.use('/api/debug', debugRoutes);
