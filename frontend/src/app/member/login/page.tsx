@@ -19,12 +19,15 @@ export default function MemberLoginPage() {
     setError('');
 
     try {
+      const apiUrl = 'https://4set-arena-production.up.railway.app/api/member/auth/login';
       console.log('🔐 Tentando fazer login...', { memberCode });
-      console.log('🌐 URL da API:', API_CONFIG.baseURL);
+      console.log('🌐 URL da API:', apiUrl);
       
-      const response = await API_CONFIG.fetch('/member/auth/login', {
+      const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: API_CONFIG.getHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           memberCode,
           password
