@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { Member } from '../models/Member';
+import pool from '../config/database';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
@@ -20,12 +20,17 @@ export const authenticateMember = async (req: Request, res: Response, next: Next
       return res.status(401).json({ error: 'Token inválido para membro' });
     }
 
-    // Verificar se o membro ainda existe e está ativo
-    const member = await Member.findByPk(decoded.memberId);
+    // Verificar se o membro ainda existe e está ativo usando pool direto
+    const result = await pool.query(
+      'SELECT id, member_code, full_name, membership_type, status FROM members WHERE id = $1',
+      [decoded.memberId]
+    );
     
-    if (!member || member.status !== 'active') {
+    if (result.rows.length === 0 || result.rows[0].status !== 'active') {
       return res.status(401).json({ error: 'Membro não encontrado ou inativo' });
     }
+
+    const member = result.rows[0];
 
     // Adicionar informações do membro ao request
     (req as any).member = {
