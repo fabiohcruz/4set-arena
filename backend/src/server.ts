@@ -38,7 +38,9 @@ app.use(cors({
     ? [
         'https://frontend-vercel-pearl.vercel.app',
         'https://4set-arena-production.up.railway.app',
-        'https://yourdomain.com'
+        'https://yourdomain.com',
+        'http://localhost:3000',
+        'http://localhost:3001'
       ] 
     : ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true
