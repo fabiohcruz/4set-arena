@@ -19,6 +19,9 @@ export default function MemberLoginPage() {
     setError('');
 
     try {
+      console.log('🔐 Tentando fazer login...', { memberCode });
+      console.log('🌐 URL da API:', API_CONFIG.baseURL);
+      
       const response = await API_CONFIG.fetch('/member/auth/login', {
         method: 'POST',
         headers: API_CONFIG.getHeaders(),
@@ -28,9 +31,20 @@ export default function MemberLoginPage() {
         })
       });
 
-      const data = await response.json();
+      console.log('📡 Resposta recebida:', response.status, response.statusText);
+
+      let data;
+      try {
+        const text = await response.text();
+        console.log('📄 Corpo da resposta:', text);
+        data = JSON.parse(text);
+      } catch (parseError) {
+        console.error('❌ Erro ao fazer parse do JSON:', parseError);
+        throw new Error('Resposta inválida do servidor');
+      }
 
       if (response.ok) {
+        console.log('✅ Login bem-sucedido!');
         // Salvar token e dados do membro
         localStorage.setItem('memberToken', data.token);
         localStorage.setItem('memberData', JSON.stringify(data.member));
@@ -38,10 +52,11 @@ export default function MemberLoginPage() {
         // Redirecionar para dashboard do membro
         router.push('/member/dashboard');
       } else {
+        console.log('❌ Login falhou:', data.error);
         setError(data.error || 'Erro ao fazer login');
       }
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error('❌ Erro no login:', error);
       setError('Erro de conexão. Tente novamente.');
     } finally {
       setLoading(false);
