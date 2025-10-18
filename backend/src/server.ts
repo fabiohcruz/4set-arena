@@ -314,6 +314,28 @@ app.post('/api/create-admin', async (req, res) => {
   }
 });
 
+// Rota para criar tabelas de pagamento
+app.get('/api/setup-payments', async (req, res) => {
+  try {
+    console.log('🚀 Iniciando setup de pagamentos...');
+    
+    const { createPaymentTables } = await import('./scripts/createPaymentTables');
+    await createPaymentTables();
+    
+    res.json({ 
+      success: true,
+      message: 'Tabelas de pagamento criadas com sucesso!',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Erro ao criar tabelas:', error);
+    res.status(500).json({ 
+      success: false,
+      error: (error as Error).message 
+    });
+  }
+});
+
 // Rota de teste simples
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
