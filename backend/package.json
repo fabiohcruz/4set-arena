@@ -17,7 +17,8 @@
     "sync:stock": "ts-node src/scripts/syncStockTables.ts",
     "init:db": "ts-node src/scripts/initDatabase.ts",
     "export:data": "ts-node src/scripts/exportData.ts",
-    "import:data": "ts-node src/scripts/importData.ts"
+    "import:data": "ts-node src/scripts/importData.ts",
+    "setup:payments": "ts-node src/scripts/setupPaymentSystem.ts"
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",

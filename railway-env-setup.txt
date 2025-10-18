@@ -1,0 +1,35 @@
+# ========================================
+# VARIÁVEIS DE AMBIENTE PARA O RAILWAY
+# ========================================
+# Copie e cole estas variáveis no Railway:
+# https://railway.app/project/seu-projeto/variables
+# ========================================
+
+# Mercado Pago
+MERCADOPAGO_ACCESS_TOKEN=APP_USR-c9410f1f-9b77-4950-a04e-c31c017debe2
+
+# SendGrid (Email)
+SENDGRID_API_KEY=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
+FROM_EMAIL=4set@4set.com.br
+FROM_NAME=4SET ARENA
+
+# Twilio (SMS)
+TWILIO_ACCOUNT_SID=AC085138d9d7b6783a892b4056e2a207ff
+TWILIO_AUTH_TOKEN=e87422ff64ad0aedd0134c5d427e418f
+TWILIO_PHONE_NUMBER=5547999810017
+
+# URLs
+FRONTEND_URL=https://4set-arena-t7z4.vercel.app
+BACKEND_URL=https://4set-arena-production.up.railway.app
+
+# ========================================
+# INSTRUÇÕES:
+# ========================================
+# 1. Acesse: https://railway.app
+# 2. Vá no seu projeto: 4set-arena-production
+# 3. Clique em "Variables"
+# 4. Clique em "New Variable"
+# 5. Cole cada variável (uma por vez)
+# 6. Clique em "Deploy" para aplicar as mudanças
+# ========================================
+
