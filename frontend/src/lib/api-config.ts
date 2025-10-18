@@ -1,6 +1,6 @@
 // Configuração centralizada da API
 export const API_CONFIG = {
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://4set-arena-production.up.railway.app/api',
+  baseURL: 'https://4set-arena-production.up.railway.app/api',
   
   // Headers padrão
   getHeaders: (token?: string) => {
