@@ -28,19 +28,25 @@ export const memberLogin = async (req: Request, res: Response) => {
     }
 
     const member = result.rows[0];
+    console.log('👤 Membro encontrado:', member.member_code, member.full_name);
 
     // Verificar senha
     if (!member.password) {
+      console.log('❌ Senha não configurada');
       return res.status(401).json({ error: 'Senha não configurada para este membro' });
     }
 
+    console.log('🔐 Verificando senha...');
     const isValidPassword = await bcrypt.compare(password, member.password);
+    console.log('✅ Senha válida:', isValidPassword);
     
     if (!isValidPassword) {
+      console.log('❌ Senha incorreta');
       return res.status(401).json({ error: 'Senha incorreta' });
     }
 
     // Gerar token JWT
+    console.log('🎫 Gerando token JWT...');
     const token = jwt.sign(
       { 
         memberId: member.id, 
@@ -50,7 +56,9 @@ export const memberLogin = async (req: Request, res: Response) => {
       JWT_SECRET,
       { expiresIn: '24h' }
     );
+    console.log('✅ Token gerado com sucesso');
 
+    console.log('📤 Enviando resposta de sucesso');
     res.json({
       message: 'Login realizado com sucesso',
       token,
@@ -64,6 +72,7 @@ export const memberLogin = async (req: Request, res: Response) => {
         status: member.status
       }
     });
+    console.log('✅ Resposta enviada');
   } catch (error) {
     console.error('Erro no login do membro:', error);
     res.status(500).json({ error: 'Erro interno do servidor' });
